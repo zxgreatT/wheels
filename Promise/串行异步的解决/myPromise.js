@@ -44,9 +44,21 @@ function MyPromise (fn) {
 }
 //实现then
 MyPromise.prototype.then = function(onFulfilled,onRejected) {
+    const self = this
+    let bridgePromise
+    //防止使用不传成功或失败回调函数，所以默认函数
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value
+    onRejected = typeof onRejected === 'function' ? onRejected : error => {throw error}
     if(this.status === PENDING) {
-       this.onFulfilledCallbacks = [...this.onFulfilledCallbacks,onFulfilled]
-       this.onRejectedCallbacks = [...this.onRejectedCallbacks,onRejected]
+       return bridgePromise = new MyPromise((resolve,reject) => {
+           self.onFulfilledCallbacks.push((value) => {
+               try{
+                   let x = onFulfilled(value)
+               }catch{
+                   
+               }
+           })
+       })
     } else if(this.status === FULFILLED) {
         //如果状态是fulfilled,直接执行成功回调,并将成功值传入
         onFulfilled(this.value)
